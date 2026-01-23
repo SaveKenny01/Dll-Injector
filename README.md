@@ -1,1 +1,3 @@
-# DLLInject 23.01.2026
+Dll-Injector version 1.0
+
+How to use:
