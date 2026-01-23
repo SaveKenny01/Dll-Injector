@@ -97,6 +97,11 @@ static extern bool CloseHandle(IntPtr hObject);
 CloseHandle(hRemoatThread); 
 if (HandleProcess != IntPtr.Zero && HandleProcess.ToInt64() != -1) { CloseHandle(HandleProcess);
 ```
+## How to use
+ * Start tool as administrator.
+ * Enter the path to DLL
+ * Select target process
+ * Confirm start injection.
 ## About
   * This project is in the development stage. Should you have any suggestions for improvements or encounter any issues, we encourage you to submit them via the [issue](https://github.com/SaveKenny01/Dll-Injector/issues).
   ## * DISCLAIMER: I AM NOT RESPONSIBLE FOR ANY ILLEGAL USAGE OF THIS TOOL.
