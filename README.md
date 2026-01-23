@@ -1,7 +1,7 @@
 # Dll-Injector Version 1.0
 
 **Application for injection dll to already running processes.**
-**The core application is written entirely in C#. Currently, it only supports libraries in the form of C/C++ DLLs.**
+**The core application is written entirely in C#. Currently, it only supports C/C++ DLLs.**
 
 ## Requirements
 ### Minimum
