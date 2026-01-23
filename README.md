@@ -1,3 +1,3 @@
-#Dll-Injector version 1.0
+#Dll-Injector 
 
 How to use:
