@@ -242,7 +242,7 @@ namespace DLLInject
                     }
 
                     else
-                    {
+                    {https://github.com/SaveKenny01/Dll-Injector/issues
                         if (input.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))                         // Try search whithout "exe" & ignore register
                         {
                             input = new string(input[..^4]);
@@ -594,7 +594,7 @@ namespace DLLInject
                         Console.WriteLine("╚══════════════════════════════════════════════════════════╝");
                         Console.ResetColor();
                         Console.WriteLine("Something broke... If you know how to fix it - write to me on GitHub:");
-                        Console.WriteLine("");
+                        Console.WriteLine("https://github.com/SaveKenny01/Dll-Injector/issues");
                     }
                     else
                     {
@@ -605,7 +605,7 @@ namespace DLLInject
                         Console.WriteLine("╚══════════════════════════════════════════════════════════╝");
                         Console.ResetColor();
                         Console.WriteLine("Thanks for using Injector. If you have any questions or ideas on how to improve the injector - write to me on GitHube:");
-                        Console.WriteLine("");
+                        Console.WriteLine("https://github.com/SaveKenny01/Dll-Injector/issues");
                     }
                     
                 }
@@ -618,7 +618,7 @@ namespace DLLInject
                     Console.WriteLine("╚══════════════════════════════════════════════════════════╝");
                     Console.ResetColor();
                     Console.WriteLine("Something broke... If you know how to fix it - write to me on GitHub:");
-                    Console.WriteLine("");
+                    Console.WriteLine("https://github.com/SaveKenny01/Dll-Injector/issues");
                 }
                 try
                 {
