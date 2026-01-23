@@ -111,6 +111,7 @@ if (HandleProcess != IntPtr.Zero && HandleProcess.ToInt64() != -1) { CloseHandle
   * This project is in the development stage. Should you have any suggestions for improvements or encounter any issues, we encourage you to submit them via the [issue](https://github.com/SaveKenny01/Dll-Injector/issues).
   * It might be a heuristic reaction from your antivirus, in which case try disabling it.
   ## DISCLAIMER: I AM NOT RESPONSIBLE FOR ANY ILLEGAL USAGE OF THIS TOOL.
+  * [LICENSE](/LICENSE)
 ## Additional References
   * [MEM Constants](https://learn.microsoft.com/en-us/windows/win32/memory/memory-protection-constants)
   * [Process Constants](https://learn.microsoft.com/en-us/windows/win32/procthread/process-security-and-access-rights#constants)
