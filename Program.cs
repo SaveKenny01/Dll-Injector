@@ -604,8 +604,6 @@ namespace DLLInject
                         Console.WriteLine("║                  DLL load successfully!                  ║");
                         Console.WriteLine("╚══════════════════════════════════════════════════════════╝");
                         Console.ResetColor();
-                        Console.WriteLine("Thanks for using Injector. If you have any questions or ideas on how to improve the injector - write to me on GitHube:");
-                        Console.WriteLine("https://github.com/SaveKenny01/Dll-Injector/issues");
                     }
                     
                 }
