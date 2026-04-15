@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Text;
 using System.Threading;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DLLInject
 {
@@ -385,80 +386,9 @@ namespace DLLInject
             catch { return true; }
 
         }
-        public static void Main(string[] args)
+
+        public static void inject(string DLLPath, IntPtr HandleProcess, int CurrentProcess)
         {
-            Console.Title = "Diagnostic DLL Injector";
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.WriteLine("╔══════════════════════════════════════════════════════════╗");
-            Console.WriteLine("║                        DLL Injector                      ║");
-            Console.WriteLine("║                        Version 1.0!                      ║");
-            Console.WriteLine("╚══════════════════════════════════════════════════════════╝");
-            Console.ResetColor();
-
-            bool isAdministrator = IsAdmin();
-            if (!isAdministrator)
-            {
-                Console.WriteLine("[!] The program is not running as administrator, some functions may work not correctly/not work. Please start as administrator!");
-                Console.WriteLine();
-            }
-            string DLLPath;
-            while (true)
-            {
-                Console.WriteLine("[-] Enter full Path dll:");
-                DLLPath = Console.ReadLine()?.Trim('"', ' ');       // Save path without (' ') / (" ")
-                if (DLLPath == null)
-                {
-                    Console.WriteLine("[!] Dll address cant be empty!");
-                }
-                if (!File.Exists(DLLPath) || string.IsNullOrEmpty(DLLPath))     // Check if dll path is available?
-                {
-                    Console.WriteLine("[!] Path not found!");
-                    continue;
-                }
-                else { break; }
-            }
-            Console.WriteLine();
-
-            DllInfo(DLLPath);                   
-            Console.WriteLine();
-            
-            RunningProcess();
-            (string TargetName, Process TargetProcess) = ChoiceProcess();
-            Console.WriteLine();
-
-            int CurrentProcess = TargetProcess.Id;
-
-            IntPtr HandleProcess = OpenProcess(PROCESS_CREATE_THREAD | PROCESS_QUERY_INFORMATION | PROCESS_VM_OPERATION | PROCESS_VM_WRITE | PROCESS_VM_READ, false, CurrentProcess);       // Open process with needed privileges -> hHandle process
-            if (HandleProcess == IntPtr.Zero)
-            {
-                Console.WriteLine("[!] ERROR: OpenProcess!");
-                return;
-            }
-
-            bool IsProcess32bit = ProcessInfo(HandleProcess, TargetProcess);   // Check process architecture(use function ProcessInfo) with handle
-            Console.WriteLine();
-
-            SysInfo(TargetName, DLLPath, IsProcess32bit);               // Show system info & check comatibility dll with process
-            Console.WriteLine();
-
-            while (true)
-            {
-                Console.WriteLine("The system is ready, inject dll? [ y ] [ n ]");
-                string input = Console.ReadLine().ToLower();
-                if (input == "y" || input == "yes")
-                {
-                    Console.WriteLine("[-] Starting inject...");
-                    Console.WriteLine();
-                    break;
-                }
-                else if(input == "n" || input == "no")
-                {
-                    return;
-                }
-                else { continue; }
-            }
-
-
             //======================= INJECT ===========================
             //||                                                      ||
             //==========================================================
@@ -476,7 +406,7 @@ namespace DLLInject
 
                 IntPtr localLoadLibraryAddr = GetProcAddress(GetModuleHandle("kernel32.dll"), "LoadLibraryW");
 
-                long offsetInsideKernel32 = localLoadLibraryAddr.ToInt64() - localKernel32Base.ToInt64();               
+                long offsetInsideKernel32 = localLoadLibraryAddr.ToInt64() - localKernel32Base.ToInt64();
 
                 Console.WriteLine("[-] Search location LoadLibraryW...");
                 IntPtr remoteLoadLibraryW = new IntPtr(remoteKernel32Base.ToInt64() + offsetInsideKernel32);            // Search loadLibraryW. (local loadLibraryW address in kernel dll = remote loadLibraryW address in kernel32
@@ -511,7 +441,7 @@ namespace DLLInject
                 UIntPtr bytesWritten;
                 Console.WriteLine("[-] Writing Path to dll into the memory...");
                 bool resultWrite = WriteProcessMemory(HandleProcess, AllocMem, dllPath, (uint)dllPath.Length, out bytesWritten);                    // Write the dll path into the allocated memory in the target process (now LoadLibrary can read this path)
-                if (!resultWrite)                                                                                           
+                if (!resultWrite)
                 {
                     Console.WriteLine("[!] Error in WriteProcessMemory");                                                                           // Check result after all operation
                     return;
@@ -544,13 +474,13 @@ namespace DLLInject
 
                 switch (waitResult)
                 {
-                    case 0x00000000: 
+                    case 0x00000000:
                         Console.WriteLine($"[-] Stream normaly ended!");
                         break;
-                    case 0x00000102: 
+                    case 0x00000102:
                         Console.WriteLine($"[!] Wait timeout (10 seconds)!");
                         break;
-                    case 0xFFFFFFFF: 
+                    case 0xFFFFFFFF:
                         Console.WriteLine($"[!] Timeout error!");
                         break;
                     default:
@@ -576,7 +506,7 @@ namespace DLLInject
                         if (getLastErrorAddr != IntPtr.Zero)
                         {
                             IntPtr hErrorThread = CreateRemoteThread(HandleProcess, IntPtr.Zero, 0, getLastErrorAddr, IntPtr.Zero, 0, IntPtr.Zero);
-                                                                    
+
 
                             if (hErrorThread != IntPtr.Zero)                                    // Tring to catch last error 
                             {
@@ -605,7 +535,7 @@ namespace DLLInject
                         Console.WriteLine("╚══════════════════════════════════════════════════════════╝");
                         Console.ResetColor();
                     }
-                    
+
                 }
                 else
                 {
@@ -632,7 +562,196 @@ namespace DLLInject
             }
 
             finally { if (HandleProcess != IntPtr.Zero && HandleProcess.ToInt64() != -1) { CloseHandle(HandleProcess); } }                          //Close handle of current process
-            Console.ReadLine();
+        }
+
+        public static void simpleInject(string DLLPath)
+        {
+
+            DllInfo(DLLPath);
+            Console.WriteLine();
+
+            RunningProcess();
+            (string TargetName, Process TargetProcess) = ChoiceProcess();
+            Console.WriteLine();
+
+            int CurrentProcess = TargetProcess.Id;
+
+            IntPtr HandleProcess = OpenProcess(PROCESS_CREATE_THREAD | PROCESS_QUERY_INFORMATION | PROCESS_VM_OPERATION | PROCESS_VM_WRITE | PROCESS_VM_READ, false, CurrentProcess);       // Open process with needed privileges -> hHandle process
+            if (HandleProcess == IntPtr.Zero)
+            {
+                Console.WriteLine("[!] ERROR: OpenProcess!");
+                return;
+            }
+
+            bool IsProcess32bit = ProcessInfo(HandleProcess, TargetProcess);   // Check process architecture(use function ProcessInfo) with handle
+            Console.WriteLine();
+
+            SysInfo(TargetName, DLLPath, IsProcess32bit);               // Show system info & check comatibility dll with process
+            Console.WriteLine();
+
+            while (true)
+            {
+                Console.WriteLine("The system is ready, inject dll? [ y ] [ n ]");
+                string input = Console.ReadLine().ToLower();
+                if (input == "y" || input == "yes")
+                {
+                    Console.WriteLine("[-] Starting inject...");
+                    Console.WriteLine();
+                    break;
+                }
+                else if (input == "n" || input == "no")
+                {
+                    return;
+                }
+                else { continue; }
+            }
+
+            inject(DLLPath, HandleProcess, CurrentProcess);
+        }
+        public static void Main(string[] args)
+        {
+            Console.Title = "Diagnostic DLL Injector";
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine("╔══════════════════════════════════════════════════════════╗");
+            Console.WriteLine("║                        DLL Injector                      ║");
+            Console.WriteLine("║                        Version 1.0!                      ║");
+            Console.WriteLine("╚══════════════════════════════════════════════════════════╝");
+            Console.ResetColor();
+
+            bool isAdministrator = IsAdmin();
+            if (!isAdministrator)
+            {
+                Console.WriteLine("[!] The program is not running as administrator, some functions may work not correctly/not work. Please start as administrator!");
+                Console.WriteLine();
+            }
+            while (true)
+            {
+
+
+                string ConfigPath = "data.txt";
+                Console.WriteLine("[0] Inject one DLL..");
+                Console.WriteLine("[1] Use Dll`s configuration..");
+                Console.WriteLine("[2] Create Dll`s configuration..");
+                string choice = Console.ReadLine();
+
+
+                if (choice == null)
+                {
+                    Console.WriteLine("[!] Dll address cant be empty!");
+                }
+                if (choice == "0")
+                {
+                    string DLLPath;
+                    while (true)
+                    {
+                        Console.WriteLine("[-] Enter full Path dll:");
+                        DLLPath = Console.ReadLine()?.Trim('"', ' ');       // Save path without (' ') / (" ")
+                        if (DLLPath == null)
+                        {
+                            Console.WriteLine("[!] Dll address cant be empty!");
+                        }
+                        if (!File.Exists(DLLPath) || string.IsNullOrEmpty(DLLPath))     // Check if dll path is available?
+                        {
+                            Console.WriteLine("[!] Path not found!");
+                            continue;
+                        }
+                        else { break; }
+                    }
+                    Console.WriteLine();
+
+                    simpleInject(DLLPath);
+                }
+                if (choice == "1")
+                {
+                    if (!File.Exists(ConfigPath))
+                    {
+                        Console.WriteLine("Dll`s configuration not found!");
+                        continue;
+                    }
+
+                    FileInfo configInfo = new FileInfo(ConfigPath);
+
+                    if (configInfo.Length <= 0)
+                    {
+                        Console.WriteLine("Dll`s configuration not found!");
+                        continue;
+                    }
+                    List<string> lines = new List<string>(File.ReadAllLines("data.txt", Encoding.UTF8));
+                    foreach (string list in lines)
+                    {
+                        simpleInject(list);
+                    }
+                    continue;
+
+                }
+                if (choice == "2")
+                {
+                    List<string> list = new List<string>();
+
+                    while (true)
+                    {
+                        Console.WriteLine("[-] Enter full Path dll:");
+                        string Path = Console.ReadLine().Trim('"', ' ');
+                        if (Path == null)
+                        {
+                            Console.WriteLine("[!] Dll address cant be empty!");
+                            continue;
+                        }
+                        if (!File.Exists(Path) || string.IsNullOrEmpty(Path))
+                        {
+                            Console.WriteLine("[!] Path not found!");
+                            continue;
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Add path {Path}? [n] [y]");
+                            string choice0 = Console.ReadLine();
+
+                            if (string.IsNullOrEmpty(choice0) || choice0.ToLower() == "n")
+                            {
+                                break;
+                            }
+                            if (choice0.ToLower() == "y")
+                            {
+
+                                list.Add(Path);
+                                Console.WriteLine("Path added, add more? [n] [y]");
+                                string choice1 = Console.ReadLine();
+
+
+                                if (choice1.ToLower() == "n")
+                                {
+                                    File.WriteAllLines("data.txt", list, Encoding.UTF8);
+
+                                    foreach (var item in list)
+                                    {
+                                        simpleInject(item);
+                                    }
+                                    break;
+                                }
+                                if (choice1.ToLower() == "y")
+                                {
+                                    continue;
+                                }
+                                else { break; }
+
+                            }
+                            else
+                            {
+                                continue;
+                            }
+                        }
+                    }
+
+                }
+                else
+                {
+                    continue;
+                }
+
+            }
+
+
         }
     }
 }
