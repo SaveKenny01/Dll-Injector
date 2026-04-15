@@ -11,6 +11,11 @@
   * Windows 10
   * Windows 11
 
+## How to use:
+### Inject one DLL – Select a single DLL to load.
+### Use DLL configuration – Use a previously created list of DLLs to load.
+### Create DLL configuration – Create a list of DLLs to load.
+
 ## How it work:
 ###
 ### Search for [kernel32](https://learn.microsoft.com/en-us/windows/win32/api/winbase/) in current process
