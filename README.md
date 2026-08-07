@@ -115,7 +115,7 @@ if (HandleProcess != IntPtr.Zero && HandleProcess.ToInt64() != -1) { CloseHandle
 ![](./Images/image3.png)
 ## About
   * This project is in the development stage. Should you have any suggestions for improvements or encounter any issues, we encourage you to submit them via the [issue](https://github.com/SaveKenny01/Dll-Injector/issues).
-  * It might be a heuristic reaction from your antivirus, in which case try disabling it.
+  * It might be a heuristic reaction from your antivirus.
   ## DISCLAIMER: I AM NOT RESPONSIBLE FOR ANY ILLEGAL USAGE OF THIS TOOL.
   * [LICENSE](/LICENSE)
 ## Additional References
